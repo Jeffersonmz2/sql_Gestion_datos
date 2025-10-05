@@ -1,0 +1,23 @@
+SELECT
+    c.NOMBRE AS "NOMBRE DEL CURSO",
+    u.NOMBRE || ' ' || u.APELLIDO AS "NOMBRE COMPLETO DEL PROFESOR",
+    s.NOMBRE AS "SALÓN",
+    cc.DIA || ' DE ' || cc.HORA_INICIO || ' A ' || cc.HORA_FIN AS "HORARIO" -- Concatenación para formato de horario más claro
+FROM
+    CARRERAS car
+JOIN
+    CURSOS_CARRERAS cr_car ON car.ID_CARRERA = cr_car.ID_CARRERA
+JOIN
+    CURSOS c ON cr_car.ID_CURSO = c.ID_CURSO
+JOIN
+    CALENDARIO_CURSOS cc ON c.ID_CURSO = cc.ID_CURSO
+JOIN
+    SALONES s ON cc.ID_SALON = s.ID_SALON
+JOIN
+    USUARIOS u ON cc.ID_PROFESOR = u.ID_USUARIO -- **Asunción:** ID_PROFESOR es FK a ID_USUARIO
+WHERE
+    UPPER(car.NOMBRE) LIKE 'INGENIER%A DE SISTEMAS'
+ORDER BY
+    c.NOMBRE, cc.DIA, cc.HORA_INICIO;
+    
+    
