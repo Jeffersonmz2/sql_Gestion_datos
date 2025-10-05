@@ -1,0 +1,30 @@
+SELECT 
+    c.NOMBRE AS nombre_curso,
+    ca.NOMBRE AS nombre_carrera,
+    cc.SEMESTRE AS semestre
+FROM 
+    CURSOS c
+    JOIN CURSOS_CARRERAS cc ON c.ID_CURSO = cc.ID_CURSO
+    JOIN CARRERAS ca ON cc.ID_CARRERA = ca.ID_CARRERA
+WHERE 
+    NOT EXISTS (
+        SELECT 1 
+        FROM CURSOS_ESTUDIANTES ce
+        JOIN CALENDARIO_CURSOS cal ON ce.ID_CALENDARIO = cal.ID_CALENDARIO
+        WHERE ce.ID_USUARIO = 1 
+        AND cal.ID_CURSO = c.ID_CURSO
+    )
+    AND cc.ID_CARRERA NOT IN (
+        SELECT DISTINCT cc2.ID_CARRERA 
+        FROM CURSOS_ESTUDIANTES ce2
+        JOIN CALENDARIO_CURSOS cal2 ON ce2.ID_CALENDARIO = cal2.ID_CALENDARIO
+        JOIN CURSOS_CARRERAS cc2 ON cal2.ID_CURSO = cc2.ID_CURSO
+        WHERE ce2.ID_USUARIO = 1
+    )
+    AND cc.SEMESTRE != (
+        SELECT u.SEMESTRE 
+        FROM USUARIOS u 
+        WHERE u.ID_USUARIO = 1 
+    )
+ORDER BY 
+    ca.NOMBRE, c.NOMBRE, cc.SEMESTRE;
